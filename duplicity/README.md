@@ -1,7 +1,7 @@
 Duplicity reloaded !
 ====================
 
-Duplicity is a great backup tool, however, it misses the web frontend I am looking for, so I decided to build it. This is a fork which aims to integrate several features already developped that may seem handy.
+Duplicity is a great backup tool, however, it misses the web frontend I am looking for, so I decided to build it. This is a fork which aims to integrate several features already developed that may seem handy.
 
 Dependencies
 ------------

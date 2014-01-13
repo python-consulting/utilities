@@ -44,7 +44,8 @@ if os.name == 'posix':
 
 data_files = [('share/man/man1',
                ['bin/duplicity.1',
-                'bin/rdiffdir.1']),
+                'bin/rdiffdir.1',
+                'bin/duplicity-manager.sh']),
               ('share/doc/duplicity-%s' % version_string,
                ['COPYING',
                 'README',

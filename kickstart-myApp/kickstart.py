@@ -133,13 +133,13 @@ def main():
     if subprocess.call([virtualenv_python, working_dir+"/bootstrap.py"]):
         raise Exception("Unable to launch buildout bootstrap.")
 
-    virtualenv_activate_script = "../virtualenv_%s/bin/activate" % app_name
-    if subprocess.call(["ln", "-s", virtualenv_activate_script, "./virtualenv_activate_script"]):
-        raise Exception("Unable to create link from virtualenv activate script.")
-
     os.unlink('bootstrap.py')
 
     if args.remote_git_repo == 'local':
+        virtualenv_activate_script = "../virtualenv_%s/bin/activate" % app_name
+        if subprocess.call(["ln", "-s", virtualenv_activate_script, "./virtualenv_activate_script"]):
+            raise Exception("Unable to create link from virtualenv activate script.")
+
         if subprocess.call(["touch", "src/README"]):
             raise Exception("src folder does not exits or unable to create file README")
 

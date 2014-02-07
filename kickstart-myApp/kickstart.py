@@ -122,8 +122,14 @@ def main():
 
     fn_touch_and_write("%s/README" % working_dir, basic_readme)
 
+    # Upgrate setuptools
+    virtualenv_ezi = "%s/virtualenv_%s/bin/easy_install" % (os.getcwd(), app_name)
+    if subprocess.call([virtualenv_ezi, "--upgrade", "setuptools"]):
+        raise Exception("Unable to upgrade setuptools")
+
     virtualenv_python = "%s/virtualenv_%s/bin/python" % (os.getcwd(), app_name)
     os.chdir(working_dir)
+
     if subprocess.call([virtualenv_python, working_dir+"/bootstrap.py"]):
         raise Exception("Unable to launch buildout bootstrap.")
 

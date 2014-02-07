@@ -38,18 +38,37 @@ basic_readme =""" Do not forget to source the virtualenv_activate_script script:
 source virtualenv_activate_script
 """
 
-def create_if_does_not_exist(in_dir):
+def suppress_errors(func):
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except Exception:
+            pass
+    return wrapper
+
+def mkdir(in_dir):
     if not os.path.exists(in_dir):
         os.makedirs(in_dir)
     else:
-        raise Exception('Unable to create %s. Aborting.' % in_dir)
+        raise Exception('Directory %s already exists. Will not overwrite. Aborting.' % in_dir)
 
-def create_and_write_file(filename, data):
-    fd = open(filename, "w")
-    if not fd:
-        raise Exception("Unable to create %s. Check for read-write permissions." % filename)
-    fd.write(data)
-    fd.close()
+@suppress_errors
+def try_mkdir(in_dir):
+    return mkdir(in_dir)
+
+def touch_and_write(filename, data):
+    if not os.path.exists(filename):
+        fd = open(filename, "w")
+        if not fd:
+            raise Exception("Unable to create %s. Check for read-write permissions." % filename)
+        fd.write(data)
+        fd.close()
+    else:
+        raise Exception('File %s already exists. Will not overwrite. Aborting.' % filename)
+
+@suppress_errors
+def try_touch_and_write(filename, data):
+    return touch_and_write(filename, data)
 
 def main():
     parser = argparse.ArgumentParser()
@@ -61,15 +80,19 @@ def main():
     app_name = args.application_name
     
     working_dir = "%s/%s" % (os.getcwd(), app_name)
-    create_if_does_not_exist(working_dir)
+    mkdir(working_dir)
 
     if args.remote_git_repo == 'local':
         git_repo_dir = "%s/%s.git" % (os.getcwd(), app_name)
-        create_if_does_not_exist(git_repo_dir)
+        mkdir(git_repo_dir)
         if subprocess.call(["git", "--bare", "init", git_repo_dir]):
             raise Exception("Unable to create git repository. Check for git installation or read-write permissions.")
+        fn_touch_and_write = touch_and_write
+        fn_mkdir = mkdir
     else:
         git_repo_dir = args.remote_git_repo
+        fn_touch_and_write = try_touch_and_write
+        fn_mkdir = try_mkdir
 
     if subprocess.call(["git", "clone", git_repo_dir, working_dir]):
         raise Exception("Unable to clone git repository. Check for read-write permissions.")
@@ -88,16 +111,16 @@ def main():
 
     buildout_cfg = string.Template(basic_buildout_cfg)
     filename, data = working_dir+"/buildout.cfg", buildout_cfg.substitute(app_name=app_name)
-    create_and_write_file(filename, data)
-
+    fn_touch_and_write(filename, data)
+    
     setup_py = string.Template(basic_setup_py)
     filename, data = working_dir+"/setup.py", setup_py.substitute(app_name=app_name)
-    create_and_write_file(filename, data)
+    fn_touch_and_write(filename, data)
 
     working_dir_src = "%s/%s/src" % (os.getcwd(), app_name)
-    create_if_does_not_exist(working_dir_src)
+    fn_mkdir(working_dir_src)
 
-    create_and_write_file("%s/README" % working_dir, basic_readme)
+    fn_touch_and_write("%s/README" % working_dir, basic_readme)
 
     virtualenv_python = "%s/virtualenv_%s/bin/python" % (os.getcwd(), app_name)
     os.chdir(working_dir)
@@ -110,17 +133,18 @@ def main():
 
     os.unlink('bootstrap.py')
 
-    if subprocess.call(["touch", "src/README"]):
-        raise Exception("Unable to create empty file")
+    if args.remote_git_repo == 'local':
+        if subprocess.call(["touch", "src/README"]):
+            raise Exception("src folder does not exits or unable to create file README")
 
-    if subprocess.call(["git", "add", "src", "buildout.cfg", "setup.py", ".gitignore", "README"]):
-        raise Exception("Unable to execute git commands.")
+        if subprocess.call(["git", "add", "src", "buildout.cfg", "setup.py", ".gitignore", "README"]):
+            raise Exception("Unable to execute git commands.")
 
-    if subprocess.call(["git", "commit", "-m", "Initial - automatic - commit"]):
-        raise Exception("Unable to execute git commands.")
+        if subprocess.call(["git", "commit", "-m", "Initial - automatic - commit"]):
+            raise Exception("Unable to execute git commands.")
 
-    if subprocess.call(["git", "push", "origin", "master"]):
-        raise Exception("Unable to execute git commands.")
+        if subprocess.call(["git", "push", "origin", "master"]):
+            raise Exception("Unable to execute git commands.")
 
 if __name__ == '__main__':
     main()

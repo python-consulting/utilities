@@ -97,10 +97,10 @@ def main():
     if subprocess.call(["git", "clone", git_repo_dir, working_dir]):
         raise Exception("Unable to clone git repository. Check for read-write permissions.")
     
-    if subprocess.call(["wget", lastest_gitignore_url, "-O", "%s/.gitignore" % working_dir]):
+    if subprocess.call(["wget", "--no-check-certificate", lastest_gitignore_url, "-O", "%s/.gitignore" % working_dir]):
         raise Exception("Unable to get latest gitignore file from github. Check your internet connection.")
 
-    if subprocess.call(["wget", latest_buildout_url, "-O", "%s/bootstrap.py" % working_dir]):
+    if subprocess.call(["wget", "--no-check-certificate", latest_buildout_url, "-O", "%s/bootstrap.py" % working_dir]):
         raise Exception("Unable to get latest buildout bootstrap script from zope. Check your internet connection.")
 
     virtualenv_dir = "%s/virtualenv_%s" % (os.getcwd(), app_name)

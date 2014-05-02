@@ -6,8 +6,7 @@ import string
 
 lastest_gitignore_url = "https://raw2.github.com/github/gitignore/master/Python.gitignore"
 latest_buildout_url = "http://svn.zope.org/*checkout*/zc.buildout/trunk/bootstrap/bootstrap.py"
-basic_buildout_cfg = u"""
-[buildout]
+basic_buildout_cfg = u"""[buildout]
 parts = python
 develop = .
 eggs = $app_name
@@ -18,8 +17,7 @@ interpreter = python
 eggs = $${buildout:eggs}
 """
 
-basic_setup_py = u"""
-# -*- coding: utf-8 -*-
+basic_setup_py = u"""# -*- coding: utf-8 -*-
 from setuptools import setup, find_packages
 
 setup(
@@ -34,8 +32,8 @@ setup(
 )
 """
 
-basic_readme =""" Do not forget to source the virtualenv_activate_script script:
-source virtualenv_activate_script
+basic_readme =""" Do not forget to source the *activate* script:
+source activate
 """
 
 def suppress_errors(func):
@@ -137,7 +135,7 @@ def main():
 
     if args.remote_git_repo == 'local':
         virtualenv_activate_script = "../virtualenv_%s/bin/activate" % app_name
-        if subprocess.call(["ln", "-s", virtualenv_activate_script, "./virtualenv_activate_script"]):
+        if subprocess.call(["ln", "-s", virtualenv_activate_script, "./activate"]):
             raise Exception("Unable to create link from virtualenv activate script.")
 
         if subprocess.call(["touch", "src/README"]):

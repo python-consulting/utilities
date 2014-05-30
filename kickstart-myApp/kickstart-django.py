@@ -14,7 +14,7 @@ eggs = $app_name
 [python]
 recipe = zc.recipe.egg
 interpreter = python
-eggs = ${buildout:eggs}
+eggs = $${buildout:eggs}
 
 [versions]
 django = 1.6.5
@@ -25,7 +25,7 @@ downloads = downloads
 [django]
 recipe = djangorecipe
 settings = development
-eggs = ${buildout:eggs}
+eggs = $${buildout:eggs}
 project = project
 
 [node]
@@ -36,8 +36,8 @@ scripts = bower
 [web-components]
 recipe = bowerrecipe
 packages = jquery#2.1.0 bootstrap#3.1.1 underscore#1.5.2 backbone#1.1.0 jquery-file-upload#9.5.7
-executable = ${buildout:bin-directory}/bower
-base-directory = ${paths:downloads}
+executable = $${buildout:bin-directory}/bower
+base-directory = $${paths:downloads}
 downloads = web-components
 """
 

@@ -21,14 +21,14 @@ basic_setup_py = u"""# -*- coding: utf-8 -*-
 from setuptools import setup, find_packages
 
 setup(
-    name = "$app_name",
-    version = "0.1",
-    license = 'All rights reserved',
-    description = "$app_name",
-    author = 'modify_with_you_name',
-    packages = find_packages('src'),
-    package_dir = {'': 'src'},
-    install_requires = ['setuptools'],
+    name="$app_name",
+    version="0.1",
+    license='All rights reserved',
+    description="$app_name",
+    author='modify_with_you_name',
+    packages=find_packages('src'),
+    package_dir={'': 'src'},
+    install_requires=['setuptools'],
 )
 """
 
